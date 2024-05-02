@@ -1,0 +1,8 @@
+﻿@using SharedRazorClassLibrary
+<Router AppAssembly="@typeof(MauiProgram).Assembly"
+        AdditionalAssemblies="new[]{ typeof(Weather).Assembly , typeof(Counter).Assembly}">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(SharedRazorClassLibrary.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>

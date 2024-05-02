@@ -1,0 +1,11 @@
+﻿@using SharedRazorClassLibrary
+<Router AppAssembly="typeof(Program).Assembly"
+        AdditionalAssemblies="new[]{ typeof(SharedRazorClassLibrary._Imports).Assembly }">
+    <Found Context="routeData">
+        @{
+            routeData = routeData.WithAllowedInteractivity(InteractiveServer);
+        }
+        <RouteView RouteData="routeData" DefaultLayout="typeof(SharedRazorClassLibrary.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

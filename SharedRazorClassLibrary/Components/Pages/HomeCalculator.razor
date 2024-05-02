@@ -1,0 +1,316 @@
+﻿@page "/homecalculator"
+@using ChartJs.Blazor
+@using ChartJs.Blazor.Common
+@using ChartJs.Blazor.PieChart
+@using ChartJs.Blazor.Util
+
+@attribute [InteractivePage]
+
+<div style="width:auto;height:fit-content;padding:20px;">
+    <div style="background-color: #EEF5FF; padding: 5px;">
+        <h1 style="text-align:center;color:black;">Home Loan Calculator</h1>
+    </div>
+
+    <div style="background-color: #C1D8C3; padding: 5px;">
+        <h3 style="text-align:center;color:black;">Monthly payment and loan interest calculator</h3>
+
+        <div style="background-color: lightgray; padding: 5px;">
+
+            <div style="background-color: whitesmoke; padding:10px">
+
+                <div class="two-column-container">
+
+                    <div style="margin-bottom: 8px;">
+                        <label for="loanAmount" style="font-weight:bold;color:dimgray">Loan Amount:</label>
+                        <input class="inputcorners" id="loanAmount" @bind="loanAmount" placeholder="Enter Loan Amount" AutomationId="loanAmount" />
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <label for="interestRate" style="font-weight:bold;color:dimgray">Interest Rate (%):</label>
+                        <input class="inputcorners" id="interestRate" @bind="interestRate" placeholder="ROI" AutomationId="interestRate" />
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <label for="loanTenure" style="font-weight:bold;color:dimgray">Loan Tenure (years):</label>
+                        <input class="inputcorners" id="loanTenure" @bind="loanTenure" placeholder="Loan Tenure" AutomationId="loanTenure" />
+                    </div>
+
+                </div>
+
+
+                <div class="centered-container">
+                    <div style="padding: 10px">
+                        <button @onclick="CalculateEMI" class="fancy-button" id="calEMIbtn" AutomationId="calEMIbtn">Calculate EMI</button>
+                    </div>
+                </div>
+
+
+                <div class="two-column-container">
+
+                    <div style="margin-bottom: 10px;">
+
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-weight:bold;color:dimgray">Your Monthly EMI:</label>
+                            <div class="input-group">
+                                <input @bind=@monthlyEMI class="inputcorners" id="calMonthlyEMI" AutomationId="calMonthlyEMI" />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-weight:bold;color:dimgray">Total Interest Paid:</label>
+                            <div class="input-group">
+                                <input @bind=@totalInterestPaid class="inputcorners" id="caltotalIntPaid" AutomationId="caltotalIntPaid" />
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 8px;">
+                            <label style="font-weight:bold;color:dimgray">Total Of All Payments:</label>
+
+                            <div class="input-group">
+                                <input @bind=@totalAmountPaid class="inputcorners" id="caltotalAmtPaid" AutomationId="caltotalAmtPaid" />
+                            </div>
+                        </div>
+
+                        @* @if (monthlyEMI.HasValue)
+                        {
+                        <p>Your Monthly EMI: @monthlyEMI</p>
+                        } *@
+
+                        @*  @if (totalInterestPaid.HasValue)
+                        {
+                        <p>Total Interest Paid: @totalInterestPaid</p>
+                        }
+                        @if (totalAmountPaid.HasValue)
+                        {
+                        <p>Total Of All Payments: @totalAmountPaid</p>
+                        } *@
+                    </div>
+
+                    @*  Pie Chart Section *@
+                    <div style="height:240px;position:relative" class="mb-5">
+                        <div style="font-family:'Times New Roman';font-size:large; text-align:center;"></div>
+                        Home Loan payment breakdown
+                        <Chart Config="_pieConfig"></Chart>
+                        @* <ChartJs.Blazor.Chart Config="_pieConfig"></ChartJs.Blazor.Chart> *@
+                    </div>
+                </div>
+
+
+                <div class="centered-container" style="background-color: whitesmoke;">
+                    <div style="padding: 10px">
+                        <button @onclick="NavigateToDetailsPage" id="needFewDetails" AutomationId="needFewDetails" class="fancy-button">Need few details</button>
+                    </div>
+                </div>
+
+                @* <div class="centered-container" style="background-color: whitesmoke;">
+                <div style="padding: 10px">
+                <button @onclick="NavigateToOfferPage" class="fancy-button">View All Offers</button>
+                </div>
+                </div> *@
+
+                @* Disclosure Button *@
+                <div class="centered-container" style="background-color: whitesmoke;">
+                    <div style="padding: 10px">
+                        <button @onclick="ShowDisclosuresModal" Class="link-button centered-container">Disclosures</button>
+                    </div>
+                </div>
+
+                @if (showModal)
+                {
+                    <div class="modal">
+                        <div class="modal-content">
+                            <span class="close" @onclick="CloseDisclosuresModal">&times;</span>
+                            <p>
+                                Disclosure 1
+                                Free LendingTree Services
+
+                                LendingTree is compensated by companies on this site and this compensation may impact how and where offers appear on this site (such as the order). LendingTree does not include all lenders, savings products, or loan options available in the marketplace.
+
+                                What portion of LendingTree’s services in connection with my loan request is free?
+
+                                There is no cost to submit a loan request, get matched with lenders and receive conditional loan offers or quotes. You may review the conditional loan offers or quotes and talk to the lenders at no cost. Of course, the lender you choose may require a fee to process your formal loan application, appraisal, and/or credit report, but until you agree to pay the lender any fee(s), you may shop with LendingTree at no cost.
+
+                                How does LendingTree get paid?
+
+                                LendingTree does not charge you, the consumer, a fee for its services. Who pays our bills? The lender. Of course, you will be responsible for paying any loan processing, closing costs or other fees to the lender with whom you close.
+
+                                Disclosure 95
+                                Calculators
+
+                                Calculators are made available as tools for your use in researching and comparing products. LendingTree does not guarantee the accuracy of the results and you should seek individualized advice from qualified professional(s) who can assist you in regard to your personal financial circumstances. All tools and calculators are deemed examples and are for illustrative purposes only. Your final payment, interest rate, loan, amount and/or fees are unknown and all calculations are estimates only. When calculators are placed in LendingTree Widgets there are times when certain assumptions will be utilized, including, but not limited to the following:
+
+                                Home Affordability Calculator
+
+                                Assumptions
+
+                                Estimated annual property tax is 1.14%. Estimated annual homeowner’s insurance is $800. Annual homeowner’s association (HOA) dues are $0. Loan term is 30 years. This includes private mortgage insurance (PMI). These are examples only are not guaranteed amounts for any one location. Amounts are national averages from 2013 obtained from several sources. Estimated taxes and insurance amounts will adjust using the above assumptions when a new purchase/refinance/home estimated value is placed into the field and is not a guarantee of what actual amounts may be for any particular product or property.
+
+                                Rent or Buy Calculator
+
+                                Assumptions
+
+                                Rental amount includes one year of rent (you place into the calculator) and rental insurance (based on the national average for 2013). Loan term is 30 years. Property tax assumption is 1% of the home value. Annual homeowner’s association (HOA) dues being set at $100. Maintenance of owning a home is assumed at 2% of home value. Personal tax rate of 33% is factored into the calculation(s). Calculator assumes home appreciation of 4% and a rent increase of 4% annually. The cost of selling a home is 8% of the sales price based on national average of repairs, staging, and Real Estate Agent commissions. The rate of return on investments after tax is assumed at 5% pursuant to 2013 statistics.
+
+                                Mortgage Checkup Calculator
+
+                                Mortgage Checkup and calculators are made available as tools for your use in researching and shopping for mortgage products and are not intended to be investment advice of any kind. LendingTree, LLC does not guarantee the accuracy of the results and you should seek individualized advice from qualified professional(s) who can assist you in regard to your personal circumstances. All tools and calculators are deemed examples and are for illustrative purposes only.
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+@code {
+    private string selectedLoanTenure;
+    private string enteredHomePrice;
+    private string enteredDownPayment;
+    private string enteredROI;
+
+    private string selectedItemText;
+
+    private void OnGetSelectedItemClicked()
+    {
+        selectedItemText = $"You selected Loan Tenure as : {selectedLoanTenure}  and Home Price as : {enteredHomePrice} and ROI as {enteredROI}";
+    }
+
+
+
+
+    private decimal? loanAmount;
+    private decimal? interestRate;
+    private int? loanTenure;
+    private decimal? monthlyEMI;
+    private decimal? totalInterestPaid;
+    private decimal? totalAmountPaid;
+    public PieConfig _pieConfig;
+
+    //Home Loan monthly EMI Calculation
+    private void CalculateEMI()
+    {
+        if (loanAmount.HasValue && interestRate.HasValue && loanTenure.HasValue)
+        {
+            decimal principal = loanAmount.Value;
+            decimal rateOfInterest = interestRate.Value / 100 / 12; // Monthly interest rate
+            int numberOfPayments = loanTenure.Value * 12; // Total number of payments
+
+            // EMI calculation formula
+            decimal emi = principal * rateOfInterest * (decimal)Math.Pow(1 + (double)rateOfInterest, numberOfPayments) /
+            ((decimal)Math.Pow(1 + (double)rateOfInterest, numberOfPayments) - 1);
+
+            monthlyEMI = Math.Round(emi, 2);
+            totalAmountPaid = Math.Round(emi * numberOfPayments, 2);
+            totalInterestPaid = (totalAmountPaid - principal);
+
+            ConfigurePieConfigWithData(loanAmount.Value, totalInterestPaid.Value, totalAmountPaid.Value);
+        }
+    }
+
+
+    // PieChart Section
+    //private PieConfig _pieConfig;
+    protected override void OnInitialized()
+    {
+
+        ConfigurePieConfig();
+
+    }
+
+    private void ConfigurePieConfig()
+    {
+        _pieConfig = new PieConfig();
+
+        _pieConfig.Options = new PieOptions
+            {
+                CutoutPercentage = 50,
+                MaintainAspectRatio = false,
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Home Loan Components"
+                }
+            };
+
+
+        foreach (var homeLoanComponent in new[] { "EmptyPieSet" })
+        {
+            _pieConfig.Data.Labels.Add(homeLoanComponent);
+        }
+
+        //var dataset = new PieDataset<decimal>(new[] { loanAmount.Value, totalInterestPaid.Value, totalAmountPaid.Value })
+        var dataset = new PieDataset<int>(new[] { 100, 0, 0 })
+            {
+                BackgroundColor = new[]
+                        {
+                    ColorUtil.ColorHexString(80,80,80),
+                    ColorUtil.ColorHexString(0,255,0),
+                    ColorUtil.ColorHexString(0,0,255)
+                  }
+            };
+
+        _pieConfig.Data.Datasets.Add(dataset);
+    }
+
+    private void ConfigurePieConfigWithData(decimal loanAmount, decimal totalInterestPaid, decimal totalAmountPaid)
+    {
+        _pieConfig.Data.Datasets.Clear();
+        _pieConfig.Data.Labels.Clear();
+
+        foreach (var homeLoanComponent in new[] { "Pricipal", "Interest" })
+        {
+            _pieConfig.Data.Labels.Add(homeLoanComponent);
+        }
+
+        var dataset = new PieDataset<decimal>(new[] { loanAmount, totalInterestPaid })
+            // var dataset = new PieDataset<int>(new[] { 35, 15, 50 })
+            {
+                BackgroundColor = new[]
+                        {
+                    ColorUtil.ColorHexString(200,217,237),
+                    ColorUtil.ColorHexString(70,99,172),
+                    //ColorUtil.ColorHexString(0,0,255)
+                  }
+            };
+
+        _pieConfig.Data.Datasets.Add(dataset);
+
+    }
+
+    //Navigate to Offers page
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private void NavigateToDetailsPage()
+    {
+        //NavigationManager.NavigateTo("/offerspage");
+        NavigationManager.NavigateTo("/OfferWizard");
+    }
+
+    private void NavigateToOfferPage()
+    {
+        NavigationManager.NavigateTo("/offerspage");
+    }
+
+
+    //modal popup
+
+    private bool showModal = false;
+
+    private void ShowDisclosuresModal()
+    {
+        showModal = true;
+    }
+
+    private void CloseDisclosuresModal()
+    {
+        showModal = false;
+    }
+}
+

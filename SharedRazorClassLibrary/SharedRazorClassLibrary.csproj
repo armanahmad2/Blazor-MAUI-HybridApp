@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <UserMauiEssentials>true</UserMauiEssentials>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.2" />
+	  <PackageReference Include="ChartJs.Blazor.Fork" Version="2.0.2" />
+	  <PackageReference Include="Xamarin.Forms" Version="5.0.0.2662" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Components\XML\AutoLoanCalculator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\XML\" />
+  </ItemGroup>
+
+</Project>
